@@ -2,6 +2,9 @@ package com.free2move.models
 
 import org.apache.spark.sql.types.{DataTypes, StructType}
 
+
+
+
 class CsvModelSchema {
 
 
