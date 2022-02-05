@@ -15,6 +15,12 @@ object JobReader {
                     order_purchase_timestamp: String, order_approved_at: String, order_delivered_carrier_date: String, //
                     order_delivered_customer_date: String, order_estimated_delivery_date: String)
 
+  case class Products(product_id: String, product_category_name: String, product_name_lenght: String, //
+              product_description_lenght: String, product_photos_qty: String, product_weight_g: String, //
+              product_length_cm: String, product_height_cm: String, product_width_cm: String,//
+              product_category_name_english: String)
+
+
   def main(args: Array[String]) {
 
     var conf = new SparkConf().setAppName("Read CSV FIle").setMaster("local[*]")
@@ -27,63 +33,99 @@ object JobReader {
 
     // ===================================  Rdd Customers  ==========================================
     val rddFromFileCustomers = sc.textFile("data/customer.csv")
-    val empRddCustomers  = rddFromFileCustomers.map {
-      line =>
-        val column = line.split(",")
-        Customer(
-          column(0),
-          column(1),
-          column(2),
-          column(3),
-          column(4)
-        )
-    }
+
+    val empRddCustomers =
+      rddFromFileCustomers
+        .mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it)
+        .map {
+          line =>
+            val column = line.split(",")
+            Customer(
+              column(0),
+              column(1),
+              column(2),
+              column(3),
+              column(4)
+            )
+        }
     val df_customers = empRddCustomers.toDF()
     df_customers.show()
 
 
-
     // ============================================ RDD Items ============================================
     val rddFromFileItems = sc.textFile("data/items.csv")
-    val empRddItems  = rddFromFileItems.map {
-      line =>
-        val column = line.split(",")
-        Items(
-          column(0),
-          column(1),
-          column(2),
-          column(3),
-          column(4),
-          column(5),
-          column(6),
-        )
-    }
+    val empRddItems  = rddFromFileItems
+      .mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it)
+      .map {
+        line =>
+          val column = line.split(",")
+          Items(
+            column(0),
+            column(1),
+            column(2),
+            column(3),
+            column(4),
+            column(5),
+            column(6),
+          )
+      }
     val df_items = empRddItems.toDF()
     df_items.show()
 
     // ==============================================  RDD orders  ==============================================
-    val rddFromFileOrders = sc.textFile("data/items.csv")
-    val empRddOrders  = rddFromFileOrders.map {
-      line =>
-        val column = line.split(",")
-        Orders(
-          column(0),
-          column(1),
-          column(2),
-          column(3),
-          column(4),
-          column(5),
-          column(6),
-          column(7)
-        )
-    }
+    val rddFromFileOrders = sc.textFile("data/orders.csv")
+    val empRddOrders  = rddFromFileOrders
+      .mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it)
+      .map {
+        line =>
+          val column = line.split(",")
+          Orders(
+            column(0),
+            column(1),
+            column(2),
+            column(3),
+            column(4),
+            column(5),
+            column(6),
+            column(7)
+          )
+      }
     val df_orders = empRddOrders.toDF()
     df_orders.show()
 
-    //rdd.foreach(f=>{
-    //  println("Col1:"+f(0)+",Col2:"+f(1))
-    //})
+    // =========================================== RDD products ==================================================
+    val rddFromFileProducts = sc.textFile("data/products.csv")
+    val empRddProducts  = rddFromFileProducts
+      .mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it)
+      .map {
+        line =>
+          val column = line.split(",")
+          Products(
+            column(0),
+            column(1),
+            column(2),
+            column(3),
+            column(4),
+            column(5),
+            column(6),
+            column(7),
+            column(8),
+            column(9)
+          )
+      }
+    val df_products = empRddProducts.toDF()
+    df_products.show()
+
+
+
+
+    val merged = df_customers
+      .join(df_orders, df_customers.col("customer_id").equalTo(df_orders.col("customer_id")))
+      .limit(10)
+    merged.show()
   }
+
+
 
 
 }
