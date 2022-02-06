@@ -1,0 +1,132 @@
+---
+
+version: "3.6"
+
+volumes:
+  shared-workspace:
+    driver: local
+
+services:
+
+  spark-general:
+    build: ./dockers/spark_base
+    image: spark-general:2.3.0
+
+  spark-master:
+    image : spark-general:2.3.0
+    container_name: spark-master
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_MASTER_PORT=7077 
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKLOAD=master
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_MASTER_LOG=/opt/spark/logs/spark-master.out
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    command: ./bin/spark-class org.apache.spark.deploy.master.Master
+    volumes:
+      - shared-workspace:/opt/workspace
+
+
+  spark-worker-1:
+    image : spark-general:2.3.0
+    container_name: spark-worker-1
+    command: ./bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-1
+    ports:
+      - "9091:8080"
+      - "7000:7000"
+    volumes:
+      - shared-workspace:/opt/workspace
+    depends_on:
+      - spark-master
+ 
+  spark-worker-2:
+    image : spark-general:2.3.0
+    container_name: spark-worker-2
+    command: ./bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-2
+    ports:
+      - "9092:8080"
+      - "7001:7000"
+    volumes:
+      - shared-workspace:/opt/workspace
+    depends_on:
+      - spark-master
+
+
+
+
+
+
+
+
+
+
+
+# ---
+
+# version: "3.6"
+
+# services:
+
+#   spark-general:
+#     build: ./dockers/spark_base
+#     image: spark-general:3.0.0
+#     networks:
+#       - cluster-tier
+  
+#   c1-spark-master:
+#     image: spark-general:3.0.0
+#     hostname: c1-spark-master
+#     networks:
+#       cluster-tier:
+#         ipv4_address: 172.18.0.20
+#         aliases:
+#           - c1-spark-master
+
+#   c1-spark-executor1:
+#     image: spark-general:3.0.0
+#     hostname: c1-spark-executor1
+#     environment:
+#       SPARK_MASTER: 172.18.0.20
+#     networks:
+#       cluster-tier:
+#         ipv4_address: 172.18.0.21
+#         aliases:
+#           - c1-spark-executor1
+
+#   c1-spark-executor2:
+#     image: spark-general:3.0.0
+#     hostname: c1-spark-executor2
+#     environment:
+#       SPARK_MASTER: 172.18.0.20
+#     networks:
+#       cluster-tier:
+#         ipv4_address: 172.18.0.22
+#         aliases:
+#           - c1-spark-executor2
+
+# networks:
+#   cluster-tier:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 172.18.0.0/16
+#           gateway: 172.18.0.1
