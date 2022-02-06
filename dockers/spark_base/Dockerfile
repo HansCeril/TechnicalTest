@@ -1,12 +1,10 @@
 # ============================ Base Installation ===============================================
-# Get OpenJDK image
-# Install Scala
+# Get OpenJDK image from DockerHub
+# Install Scala package
 
 
 FROM openjdk:8-jre-slim
 
-ARG scala_version
-ARG shared_workspace=/opt/workspace
 
 RUN mkdir -p ${shared_workspace}/data && \
     mkdir -p /usr/share/man/man1 && \
@@ -17,15 +15,13 @@ RUN mkdir -p ${shared_workspace}/data && \
     apt install -y ./scala.deb && \
     rm -rf scala.deb /var/lib/apt/lists/*
 
+# ============================================ Define Path env ===============================================
+
 ENV SCALA_HOME="/usr/bin/scala"
 ENV PATH=${PATH}:${SCALA_HOME}/bin
-ENV SHARED_WORKSPACE=${shared_workspace}
 
-# -- Runtime
 
-VOLUME ${shared_workspace}
-
-# ============================ Installation Spark ===============================================
+# =========================================== Installation Spark ===============================================
 
 
 RUN curl https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz -o spark.tgz && \
@@ -40,9 +36,15 @@ ENV SPARK_HOME /usr/bin/spark-3.0.0-bin-hadoop3.2
 ENV SPARK_MASTER_HOST spark-master
 ENV SPARK_MASTER_PORT 7077
 
-EXPOSE 8080 7077 7000
 
-COPY ./apps/spark-technical-test_2.12-0.1.jar /opt/
+# ======================================= Expose Master, Worker, WebUI spark PORT =============================
+EXPOSE 8080 7077 7000 
+
+
+# ======================================== Copy Jar Spark App and CSV data File ===============================
+COPY ./apps_spark/spark-technical-test_2.12-0.1.jar /opt/
 COPY ./data/* /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/data/
+
+# ====================================== Change workdir container ==============================================
 
 WORKDIR ${SPARK_HOME}

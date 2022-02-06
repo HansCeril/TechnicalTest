@@ -1,11 +1,8 @@
 ---
-
+# Docker compose version
 version: "3.6"
 
-volumes:
-  spark-workspace:
-    driver: local
-
+# Build The spark Cluster
 services:
 
   spark-general:
@@ -26,8 +23,7 @@ services:
       - "9090:8080"
       - "7077:7077"
     command: ./bin/spark-class org.apache.spark.deploy.master.Master
-    volumes:
-      - spark-workspace:/opt/spark-workspace
+
 
 
   spark-worker-1:
@@ -45,8 +41,6 @@ services:
     ports:
       - "9091:8080"
       - "7000:7000"
-    volumes:
-      - spark-workspace:/opt/spark-workspace
     depends_on:
       - spark-master
  
@@ -65,7 +59,5 @@ services:
     ports:
       - "9092:8080"
       - "7001:7000"
-    volumes:
-      - spark-workspace:/opt/spark-workspace
     depends_on:
       - spark-master
