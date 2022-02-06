@@ -26,8 +26,7 @@ ENV SHARED_WORKSPACE=${shared_workspace}
 VOLUME ${shared_workspace}
 
 # ============================ Installation Spark ===============================================
-# Get OpenJDK image
-# Install Scala
+
 
 RUN curl https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz -o spark.tgz && \
     tar -xf spark.tgz && \
@@ -40,22 +39,10 @@ RUN curl https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoo
 ENV SPARK_HOME /usr/bin/spark-3.0.0-bin-hadoop3.2
 ENV SPARK_MASTER_HOST spark-master
 ENV SPARK_MASTER_PORT 7077
-ENV PYSPARK_PYTHON python3
 
-# ENV SPARK_LOCAL_IP spark-master
-# ENV SPARK_MASTER_PORT=7077 
-# ENV SPARK_MASTER=spark://spark-master:7077
-# ENV SPARK_WORKLOAD=master
-# ENV SPARK_MASTER_WEBUI_PORT=8080
-# ENV SPARK_MASTER_LOG=/opt/spark/logs/spark-master.out
+EXPOSE 8080 7077 7000
 
-# ENV SPARK_WORKER_CORES 1
-# ENV SPARK_WORKER_MEMORY 1G
-# ENV SPARK_DRIVER_MEMORY 1G
-# ENV SPARK_EXECUTOR_MEMORY 1G
-# ENV SPARK_WORKLOAD worker
-# ENV SPARK_LOCAL_IP spark-worker-1
-
-# -- Runtime
+COPY ./apps/spark-technical-test_2.12-0.1.jar /opt/
+COPY ./data/* /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/data/
 
 WORKDIR ${SPARK_HOME}
