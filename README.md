@@ -1,20 +1,5 @@
 # TechnicalTest
 
-- Script to run in cron :
-```
-for container in `docker ps --format '{{.Names}}'`; do 
-if [ $container ==  "spark-master" ]; then  
-    echo $container
-    `docker exec $container sh -c "cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://spark-master:7077 /opt/spark-technical-test_2.13-0.1.jar --class JobFreeToMove --driver-memory 1G --executor-memory 1G"` 
-fi
-done
-```
-- get the path where the cronspark_submit.sh is by using pwd cmd (ex : TechnicalTest/dockers/cronspark_submit.sh)
-- Create crontab
-```
-crontab -e
-0 0 * * * /cygdrive/c/Users/QFZF0680/Desktop/TechnicalTest/dockers/cronspark_submit.sh
-```
 
 # RUN
 
@@ -36,6 +21,21 @@ cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://s
 ```
 ## Cron Script to run the Spark app every 24h
 
+- Script to run in cron :
+```
+for container in `docker ps --format '{{.Names}}'`; do 
+if [ $container ==  "spark-master" ]; then  
+    echo $container
+    `docker exec $container sh -c "cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://spark-master:7077 /opt/spark-technical-test_2.13-0.1.jar --class JobFreeToMove --driver-memory 1G --executor-memory 1G"` 
+fi
+done
+```
+- get the path where the cronspark_submit.sh is by using pwd cmd (ex : TechnicalTest/dockers/cronspark_submit.sh)
+- Create crontab
+```
+crontab -e
+0 0 * * * /cygdrive/c/Users/QFZF0680/Desktop/TechnicalTest/dockers/cronspark_submit.sh
+```
 
 ### Access to the WebUI
 
