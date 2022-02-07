@@ -37,6 +37,11 @@ crontab -e
 0 0 * * * /cygdrive/c/Users/QFZF0680/Desktop/TechnicalTest/dockers/cronspark_submit.sh
 ```
 
+- Remove everything from crontab:
+```
+crontab -r
+```
+
 ### Access to the WebUI
 
 | Application     | URL                                      
