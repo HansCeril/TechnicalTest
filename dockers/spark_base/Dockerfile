@@ -1,5 +1,6 @@
 # ============================ Base Installation ===============================================
 # Get OpenJDK image from DockerHub
+# Install curl, cron to automate the spark submit every day
 # Install Scala package
 
 
@@ -9,7 +10,7 @@ FROM openjdk:8-jre-slim
 RUN mkdir -p ${shared_workspace}/data && \
     mkdir -p /usr/share/man/man1 && \
     apt-get update -y && \
-    apt-get install -y curl python3 r-base && \
+    apt-get install -y curl r-base cron vim && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     curl https://downloads.lightbend.com/scala/2.12.12/scala-2.12.12.deb -k -o scala.deb && \
     apt install -y ./scala.deb && \
@@ -46,5 +47,4 @@ COPY ./apps_spark/spark-technical-test_2.12-0.1.jar /opt/
 COPY ./data/* /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/data/
 
 # ====================================== Change workdir container ==============================================
-
 WORKDIR ${SPARK_HOME}
