@@ -8,7 +8,6 @@ import org.apache.spark.sql.functions.{avg, col, count, round, sum}
 
 object JobFreeToMove {
 
-  private val LOG_LEVEL = "logLevel"
   private val CSV_FILE_CUSTOMER = "data/customer.csv"
   private val CSV_FILE_ITEMS = "data/items.csv"
   private val CSV_FILE_ORDERS = "data/orders.csv"
@@ -47,21 +46,13 @@ object JobFreeToMove {
 
 
     // =========================================== Statistics =================================================
-    //
 
-    //==========================================
-    // Best Seller
-    // Which User spent the most today ?
-    val BestSeller = itemsDataSet
-      .groupBy("seller_id")
-      .agg(round(sum("price"), 2))
-      .alias("total_spent")
-      .withColumnRenamed("round(sum(price), 2)", "Total Item Sale")
-    BestSeller.show()
+
 
 
 
     // ====================================================================
+    // What is the best selling product ?
 
     val itemsMostSold = itemsDataSet
       .groupBy("product_id")
@@ -71,13 +62,12 @@ object JobFreeToMove {
       .withColumnRenamed("count(product_id)", "Number_sold_product")
       .withColumnRenamed("product_id", "n_product_id")
       .orderBy(col("round(sum(price), 2)").desc)
-      .limit(15)
-    itemsMostSold.show()
 
     val productMostSold = productsDataSet
       .join(itemsMostSold, productsDataSet.col("product_id").equalTo(itemsMostSold.col("n_product_id")))
       .select("product_id", "product_category_name", "Total_Sales_items", "Number_sold_product")
-
+      .orderBy(col("Total_Sales_items").desc)
+      .limit(5)
     productMostSold.show()
 
 
@@ -98,11 +88,23 @@ object JobFreeToMove {
 
     val mergeBestPriceOrder = ordersConfirm
       .join(bestOrderItemPrice, ordersConfirm.col("order_id").equalTo(bestOrderItemPrice.col("order_id")), "inner")
+      .orderBy(col("price").desc)
     mergeBestPriceOrder.show()
 
 
 
-
+    //==========================================
+    // Best Seller
+    // Which Seller sold the best today ?
+    val BestSeller = itemsDataSet
+      .groupBy("seller_id")
+      .agg(round(sum("price"), 2))
+      .alias("total_spent")
+      .withColumnRenamed("round(sum(price), 2)", "Total Item Sale")
+      .orderBy(col("Total Item Sale").desc)
+      .limit(5)
+    println("Best Seller Today")
+    BestSeller.show()
 
 
 
