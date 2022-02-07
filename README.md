@@ -24,7 +24,19 @@ cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://s
 
 # Statisctic
 
+## Best Customers
+
 <p align="center"><img src="images/BestCustumer.PNG"></p>
 
 
+##  Best Products
+
+<p align="center"><img src="images/BestProduct.PNG"></p>
+
+
+## Best Sellers
+<p align="center"><img src="images/BestSeller.PNG"></p>
+
+## Best Orders
+<p align="center"><img src="images/BestOrder.PNG"></p>
 
