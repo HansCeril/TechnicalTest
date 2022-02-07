@@ -63,7 +63,7 @@ sbt compile
 sbt package
 ```
 - Put the Jar created into the /spark-technical-test/target/scala-2.12/*.jar into /TechnicalTest/dockers/spark_base/apps_spark/
-- change the name of the Jar in the spark-submit (In fact don't dorget to rename your Jar 2.13 -> 1.14)
+- change the name of the Jar in the spark-submit (In fact don't dorget to rename your Jar 2.13 -> 2.14)
 ```
 cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://spark-master:7077 /opt/spark-technical-test_2.13-0.1.jar --class JobFreeToMove --driver-memory 1G --executor-memory 1G
 ```
