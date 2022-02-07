@@ -42,10 +42,10 @@ crontab -e
 crontab -r
 ```
 
-### Access to the WebUI
+## Access to the WebUI
 
 | Application     | URL                                      
-| --------------- | ----------------------------------------
+| --------------- | ---------------
 | Spark_master    | localhost:8080                           
 | Spark-worker-1  | localhost:8081                        
 | Spark-worker-2  | localhost:8082                      
