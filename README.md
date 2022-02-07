@@ -35,7 +35,7 @@ cd bin && /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/spark-submit --master spark://s
 
 
 ## Best Sellers
-<p align="center"><img src="images/BestSeller.PNG"></p>
+<p align="center"><img src="images/bestSeller.PNG"></p>
 
 ## Best Orders
 <p align="center"><img src="images/BestOrder.PNG"></p>
