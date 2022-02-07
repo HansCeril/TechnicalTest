@@ -43,7 +43,7 @@ EXPOSE 8080 7077 7000
 
 
 # ======================================== Copy Jar Spark App and CSV data File ===============================
-COPY ./apps_spark/spark-technical-test_2.12-0.1.jar /opt/
+COPY ./apps_spark/* /opt/
 COPY ./data/* /usr/bin/spark-3.0.0-bin-hadoop3.2/bin/data/
 
 # ====================================== Change workdir container ==============================================
